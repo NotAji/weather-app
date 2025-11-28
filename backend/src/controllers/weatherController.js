@@ -8,6 +8,7 @@ export const getWeather = async (req, res) => {
 
     const data = await getWeatherData(city);
 
+    console.log(data);
     res.json(data);
   } catch (error) {
     console.error(error);
