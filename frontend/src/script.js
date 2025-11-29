@@ -1,5 +1,5 @@
 const body = document.body;
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5000";
 const searchBar = document.getElementById("searchBar");
 const weatherDetails = document.getElementById("weather-details");
 
@@ -38,7 +38,7 @@ searchBar.addEventListener("keypress", async (e) => {
   }
 
   try {
-    const res = await fetch(`${API_URL}/weather?city=${city}`);
+    const res = await fetch(`${API_URL}/api/weather?city=${city}`);
 
     const data = await res.json();
 
