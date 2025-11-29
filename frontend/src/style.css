@@ -39,9 +39,17 @@ body {
 
 .weather-details {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.5s ease;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.4s ease;
+  position: relative;
+}
+
+.weather-details h2 {
+  font-size: 2.5rem;
 }
 
 .weather-details.show {
@@ -54,4 +62,48 @@ body {
   height: 60px;
   display: block;
   margin: 0 auto 10px;
+}
+
+.weather-icon {
+  width: 60px;
+  height: 60px;
+  display: block;
+  margin: 0 auto 10px;
+  position: absolute;
+  left: 10%;
+}
+
+.temp-icon {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+  margin-left: 5px;
+  position: absolute;
+  left: 10%;
+}
+
+.weather {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.temperature {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.humidWind {
+  display: flex;
+  gap: 50px;
+  font-size: 1.3rem;
+  font-weight: bold;
 }

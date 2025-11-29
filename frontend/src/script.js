@@ -1,56 +1,69 @@
 const body = document.body;
+const API_URL = "http://localhost:5000/api";
 const searchBar = document.getElementById("searchBar");
 const weatherDetails = document.getElementById("weather-details");
 
-function setWeatherBackground(description) {
-  if (description.includes("rain")) {
-    body.style.backgroundImage = "url(./assets/images/rainy.jpg)";
-  } else if (description.includes("cloudy")) {
-    body.style.backgroundImage = "url(./assets/images/cloudy.jpg)";
+function setWeatherBackground(mainWeather, isRaining) {
+  if (isRaining || mainWeather.toLowerCase().includes("rain")) {
+    body.style.backgroundImage = "url('./assets/images/rainy.jpg')";
+  } else if (mainWeather.toLowerCase().includes("cloud")) {
+    body.style.backgroundImage = "url('./assets/images/cloudy.jpg')";
   } else {
-    body.style.backgroundImage = "url(./assets/images/sunny.jpg)";
+    body.style.backgroundImage = "url('./assets/images/sunny.jpg')";
   }
 }
 
-function getWeatherIcon(description) {
-  if (description.includes("rain")) return "../assets/icons/rain.png";
-  if (description.includes("cloud")) return "../assets/icons/cloud.png";
-  return "../assets/icons/sun.png";
+function getWeatherIcon(mainWeather, isRaining) {
+  if (isRaining || mainWeather.toLowerCase().includes("rain"))
+    return "./assets/icons/rain.png";
+  if (mainWeather.toLowerCase().includes("cloud"))
+    return "./assets/icons/clouds.png";
+  return "./assets/icons/sun.png";
 }
 
-function getTempIcon(temp) {
-  if (temp >= 30) return "../assets/icons/hot.png";
-  if (temp <= 15) return "../assets/icons/cold.png";
-  return "../assets/icons/mild.png";
+function getTempIcon(tempC) {
+  if (tempC >= 30) return "./assets/icons/hot.png";
+  if (tempC <= 15) return "./assets/icons/cold.png";
+  return "./assets/icons/mild.png";
 }
 
 searchBar.addEventListener("keypress", async (e) => {
   if (e.key !== "Enter") return;
 
-  const city = searchBar.ariaValueMax.trim();
-  if (!city) return alert("Enter a City");
+  const city = searchBar.value.trim();
+  if (!city) return alert("Enter a city");
 
   try {
-    const res = await fetch(`/api/weather?city=${city}`);
+    const res = await fetch(`${API_URL}/weather?city=${city}`);
     if (!res.ok) return alert("City not found");
 
     const data = await res.json();
 
-    setWeatherBackground(data.description);
+    const mainWeather = data.weather?.[0]?.main ?? "";
+    const description = data.weather?.[0]?.description ?? "";
+    const iconCode = data.weather?.[0]?.icon ?? "";
+    const tempK = data.main?.temp;
+    const tempC = tempK ? (tempK - 273.15).toFixed(1) : "N/A";
+    const humidity = data.main?.humidity ?? "N/A";
+    const wind = data.wind?.speed ?? "N/A";
+    const isRaining = !!data.rain?.["1h"];
 
-    const weatherIcon = getWeatherIcon(data.description);
-    const tempIcon = getTempIcon(data.temp);
+    setWeatherBackground(mainWeather, isRaining);
+
+    const weatherIcon = getWeatherIcon(mainWeather, isRaining);
+    const tempIcon = getTempIcon(tempC);
 
     weatherDetails.innerHTML = `
-        <h2>${data.city}</h2>
-        <img src="${weatherIcon}" alt"${data.description}">
-        <p>
-            Temperature: ${data.temp} °C
-            ${tempIcon ? `<img src="${tempIcon}" alt="temp icon" />` : ""}
-        </p>
-        <p>Humidity: ${data.humidity}%</p>
-        <p>Wind: ${data.wind} m/s</p>
-        `;
+      <h2>${data.name}</h2>
+      <div class="weather"><img src="${weatherIcon}" alt="${description}" class="weather-icon" />
+      <p>${description}</p></div>
+      <div class="temperature">
+      <img src="${tempIcon}" alt="temp icon" class="temp-icon" />
+        <p>Temperature: ${tempC} °C
+      </p></div>
+      <div class="humidWind"><p>Humidity: ${humidity}%</p>
+      <p>Wind: ${wind} m/s</p></div>
+    `;
 
     weatherDetails.classList.remove("show");
     void weatherDetails.offsetWidth;
