@@ -8,9 +8,12 @@ export const getWeather = async (req, res) => {
 
     const data = await getWeatherData(city);
 
-    console.log(data);
     res.json(data);
   } catch (error) {
-    console.error(error);
+    const errorData = error.response?.data || {
+      cod: 500,
+      message: "Server error",
+    };
+    res.status(error.response?.status || 500).json(errorData);
   }
 };

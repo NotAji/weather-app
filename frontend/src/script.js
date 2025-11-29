@@ -31,17 +31,30 @@ searchBar.addEventListener("keypress", async (e) => {
   if (e.key !== "Enter") return;
 
   const city = searchBar.value.trim();
-  if (!city) return alert("Enter a city");
+  if (!city) {
+    weatherDetails.innerHTML = `<p>Please enter a city.</p>`;
+    weatherDetails.classList.add("show");
+    return;
+  }
 
   try {
     const res = await fetch(`${API_URL}/weather?city=${city}`);
-    if (!res.ok) return alert("City not found");
 
     const data = await res.json();
 
+    if (!res.ok || data.cod === "404") {
+      weatherDetails.innerHTML = `
+        <h2>City not found</h2>
+      `;
+      weatherDetails.classList.remove("show");
+      void weatherDetails.offsetWidth;
+      weatherDetails.classList.add("show");
+      console.log(weatherDetails);
+      return;
+    }
+
     const mainWeather = data.weather?.[0]?.main ?? "";
     const description = data.weather?.[0]?.description ?? "";
-    const iconCode = data.weather?.[0]?.icon ?? "";
     const tempK = data.main?.temp;
     const tempC = tempK ? (tempK - 273.15).toFixed(1) : "N/A";
     const humidity = data.main?.humidity ?? "N/A";
@@ -55,21 +68,32 @@ searchBar.addEventListener("keypress", async (e) => {
 
     weatherDetails.innerHTML = `
       <h2>${data.name}</h2>
-      <div class="weather"><img src="${weatherIcon}" alt="${description}" class="weather-icon" />
-      <p>${description}</p></div>
+      <div class="weather">
+        <img src="${weatherIcon}" alt="${description}" class="weather-icon" />
+        <p>${description}</p>
+      </div>
       <div class="temperature">
-      <img src="${tempIcon}" alt="temp icon" class="temp-icon" />
-        <p>Temperature: ${tempC} °C
-      </p></div>
-      <div class="humidWind"><p>Humidity: ${humidity}%</p>
-      <p>Wind: ${wind} m/s</p></div>
+        <img src="${tempIcon}" alt="temp icon" class="temp-icon" />
+        <p>Temperature: ${tempC} °C</p>
+      </div>
+      <div class="humidWind">
+        <p>Humidity: ${humidity}%</p>
+        <p>Wind: ${wind} m/s</p>
+      </div>
     `;
 
     weatherDetails.classList.remove("show");
     void weatherDetails.offsetWidth;
     weatherDetails.classList.add("show");
   } catch (error) {
-    weatherDetails.innerHTML = `<p>${error.message}</p>`;
+    weatherDetails.innerHTML = `
+      <h2>Error</h2>
+      <p>${error.message}</p>
+    `;
+    weatherDetails.classList.remove("show");
+    void weatherDetails.offsetWidth;
     weatherDetails.classList.add("show");
+    console.error(error);
+    return;
   }
 });
