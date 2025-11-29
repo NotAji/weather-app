@@ -10,8 +10,6 @@ Animated background based on weather (sunny, cloudy, rainy)
 
 Weather icons and temperature indicators
 
-responsive layout for desktop and mobile
-
 smooth card animation when displaying weather details
 
 proper error handling: blank input, invalid city, or server errors
