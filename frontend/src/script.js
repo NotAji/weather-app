@@ -1,5 +1,5 @@
 const body = document.body;
-const API_URL = "http://localhost:5000";
+const API_URL = "https://ajinweather.onrender.com";
 const searchBar = document.getElementById("searchBar");
 const weatherDetails = document.getElementById("weather-details");
 
